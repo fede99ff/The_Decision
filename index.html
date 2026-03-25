@@ -5,60 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Decision</title>
     <style>
-        /* Stile Generale Minimalista */
+        /* STILE DARK E MINIMALISTA */
         body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: 'Courier New', Courier, monospace; /* Font stile computer/mistero */
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            text-align: center;
             overflow: hidden;
+        }
+
+        #setup-area, #video-wrapper {
+            width: 90%;
+            max-width: 900px;
         }
 
         h1 {
             font-size: 2.5rem;
-            letter-spacing: 10px;
+            letter-spacing: 12px;
             margin-bottom: 20px;
-            opacity: 0.8;
+            text-transform: uppercase;
         }
 
         #countdown {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 8vw, 4rem);
             font-weight: bold;
+            color: #ff3e3e;
+            text-shadow: 0 0 20px rgba(255, 62, 62, 0.4);
             margin-bottom: 40px;
-            color: #ff3e3e; /* Rosso per dare enfasi */
-            text-shadow: 0 0 15px rgba(255, 62, 62, 0.5);
         }
 
-        /* Il Pulsante (Inizialmente Nascosto) */
-        #decision-button {
-            display: none; /* Nascosto */
-            padding: 20px 40px;
-            font-size: 1.2rem;
-            font-family: inherit;
-            background-color: transparent;
-            color: #ffffff;
-            border: 2px solid #ffffff;
+        /* PULSANTE DI RIVELAZIONE */
+        #reveal-btn {
+            display: none;
+            padding: 20px 50px;
+            font-size: 1.1rem;
+            background: transparent;
+            color: white;
+            border: 2px solid white;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            transition: 0.4s;
         }
 
-        #decision-button:hover {
-            background-color: #ffffff;
-            color: #000000;
-            box-shadow: 0 0 20px #ffffff;
+        #reveal-btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 30px #fff;
         }
 
-        /* Animazione di apparizione */
-        .fade-in {
-            animation: fadeIn 2s forwards;
+        /* VIDEO LOCALE */
+        #video-wrapper {
+            display: none;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        video {
+            width: 100%;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
         }
 
         @keyframes fadeIn {
@@ -69,48 +80,66 @@
 </head>
 <body>
 
-    <h1 id="title">THE DECISION</h1>
-    
-    <div id="countdown">CALCOLO...</div>
+    <div id="setup-area">
+        <h1 id="main-title">The Decision</h1>
+        <div id="countdown">Inizializzazione...</div>
+        <button id="reveal-btn" onclick="playLocalVideo()">Scopri la Verità</button>
+    </div>
 
-    <a href="https://drive.google.com/drive/folders/1UN-Cy_oRvkHns5hn9vMFIC-QwO6gseMM?lfhs=2&q=sharedwith:public%20parent:1UN-Cy_oRvkHns5hn9vMFIC-QwO6gseMM" id="decision-button" target="_blank">
-        SCOPRI LA DECISIONE
-    </a>
+    <div id="video-wrapper">
+        <video id="decision-video" playsinline>
+            <source src="video.mp4" type="video/mp4">
+            Il tuo browser non supporta il formato video.
+        </video>
+    </div>
 
     <script>
-        // --- CONFIGURAZIONE DATA ---
-        // Esempio: 26 Marzo 2026 alle 12:00
-        const targetDate = new Date("March 25, 2026 15:00:00").getTime();
+        // --- CONFIGURAZIONE ---
+        // Inserisci la data e l'ora esatta del tuo evento
+        const TARGET_DATE = new Date("March 26, 2026 15:00:00").getTime();
 
+        const countdownEl = document.getElementById("countdown");
+        const btn = document.getElementById("reveal-btn");
+        const title = document.getElementById("main-title");
+
+        // --- TIMER ---
         const timer = setInterval(function() {
             const now = new Date().getTime();
-            const diff = targetDate - now;
+            const diff = TARGET_DATE - now;
 
-            // Calcoli temporali
+            if (diff <= 0) {
+                clearInterval(timer);
+                countdownEl.style.display = "none";
+                title.innerText = "IL MOMENTO È ARRIVATO";
+                btn.style.display = "inline-block";
+                return;
+            }
+
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-            // Mostra il countdown
-            document.getElementById("countdown").innerHTML = d + "d " + h + "h " + m + "m " + s + "s ";
-
-            // COSA SUCCEDE ALLA FINE
-            if (diff < 0) {
-                clearInterval(timer);
-                
-                // Nascondi il countdown
-                document.getElementById("countdown").style.display = "none";
-                
-                // Cambia il titolo (opzionale)
-                document.getElementById("title").innerHTML = "IL MOMENTO È ARRIVATO";
-                
-                // Mostra il pulsante con animazione
-                const btn = document.getElementById("decision-button");
-                btn.style.display = "inline-block";
-                btn.classList.add("fade-in");
-            }
+            countdownEl.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
         }, 1000);
+
+        // --- FUNZIONE PLAY VIDEO ---
+        function playLocalVideo() {
+            const setupArea = document.getElementById("setup-area");
+            const videoWrapper = document.getElementById("video-wrapper");
+            const video = document.getElementById("decision-video");
+
+            setupArea.style.display = "none";
+            videoWrapper.style.display = "block";
+            
+            // Avvia il video con audio
+            video.play();
+            
+            // Opzionale: metti il video a tutto schermo automaticamente
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            }
+        }
     </script>
 </body>
 </html>
