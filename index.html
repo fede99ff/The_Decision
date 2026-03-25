@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Decision</title>
+    <style>
+        /* Stile Generale Minimalista */
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace; /* Font stile computer/mistero */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        #countdown {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #ff3e3e; /* Rosso per dare enfasi */
+            text-shadow: 0 0 15px rgba(255, 62, 62, 0.5);
+        }
+
+        /* Il Pulsante (Inizialmente Nascosto) */
+        #decision-button {
+            display: none; /* Nascosto */
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            background-color: transparent;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        #decision-button:hover {
+            background-color: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 20px #ffffff;
+        }
+
+        /* Animazione di apparizione */
+        .fade-in {
+            animation: fadeIn 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="title">THE DECISION</h1>
+    
+    <div id="countdown">CALCOLO...</div>
+
+    <a href="https://drive.google.com/drive/folders/1UN-Cy_oRvkHns5hn9vMFIC-QwO6gseMM?lfhs=2&q=sharedwith:public%20parent:1UN-Cy_oRvkHns5hn9vMFIC-QwO6gseMM" id="decision-button" target="_blank">
+        SCOPRI LA DECISIONE
+    </a>
+
+    <script>
+        // --- CONFIGURAZIONE DATA ---
+        // Esempio: 26 Marzo 2026 alle 12:00
+        const targetDate = new Date("March 25, 2026 15:00:00").getTime();
+
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            // Calcoli temporali
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Mostra il countdown
+            document.getElementById("countdown").innerHTML = d + "d " + h + "h " + m + "m " + s + "s ";
+
+            // COSA SUCCEDE ALLA FINE
+            if (diff < 0) {
+                clearInterval(timer);
+                
+                // Nascondi il countdown
+                document.getElementById("countdown").style.display = "none";
+                
+                // Cambia il titolo (opzionale)
+                document.getElementById("title").innerHTML = "IL MOMENTO È ARRIVATO";
+                
+                // Mostra il pulsante con animazione
+                const btn = document.getElementById("decision-button");
+                btn.style.display = "inline-block";
+                btn.classList.add("fade-in");
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
